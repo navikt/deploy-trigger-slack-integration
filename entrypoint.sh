@@ -45,12 +45,15 @@ fi
 
 # Create slack message payload
 SLACK_PAYLOAD_BASE=$(jq -n -c \
-                --arg chn "$INPUT_SLACK_CHANNEL" \
-                --arg usr "GH Actions Deploy - $SHORT_REPO" \
-                --arg msg "Deploy commit \`$SHORT_SHA\`" \
-                        '{ channel: $chn, username: $usr, text: "Deploy-knapp", icon_emoji: ":git:", blocks: [ { type: "section", text: { type: "mrkdwn", text: $msg } },  { type: "actions", elements: [] } ] }' )
+                    --arg chn "$INPUT_SLACK_CHANNEL" \
+                    --arg usr "GH Actions Deploy - $SHORT_REPO" \
+                    --arg msg "Deploy commit \`$SHORT_SHA\`" \
+                    '{ channel: $chn, username: $usr, text: "Deploy-knapp", icon_emoji: ":git:", blocks: [ { type: "section", text: { type: "mrkdwn", text: $msg } },  { type: "actions", elements: [] } ] }' )
 
 SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD_BASE | jq -c '.blocks[1].elements = '"$(toArray ${BUTTONS[@]})")
 
+
+echo $SLACK_PAYLOAD
+
 # Post message to slack webook endpoint
-curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
+#curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
