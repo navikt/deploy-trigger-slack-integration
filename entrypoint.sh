@@ -1,4 +1,4 @@
-#!/bin/sh -l
+#!/bin/bash
 
 createDevButton() {
   echo $( jq -n -c \
@@ -22,7 +22,7 @@ toArray() {
 
 # Show prod-deploy button only for master branch by default. Can be overridden by setting ALLOW_PROD
 if [[ -z ${ALLOW_PROD+x} ]]; then
-  [ $GITHUB_REF = "master"] && ALLOW_PROD=true || ALLOW_PROD=false
+  [ $GITHUB_REF = "master" ] && ALLOW_PROD=true || ALLOW_PROD=false
 fi
 
 # Convenience variables
@@ -54,4 +54,4 @@ SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD_BASE | jq -c '.blocks[1].elements = '"$(toAr
 
 
 # Post message to slack webook endpoint
-url -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $WEBHOOK_URL
+curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $WEBHOOK_URL
