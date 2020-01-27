@@ -21,8 +21,8 @@ toArray() {
 
 
 # Show prod-deploy button only for master branch by default. Can be overridden by setting ALLOW_PROD
-if [[ -z ${INPUT_ALLOW_PROD+x} ]]; then
-  [ $GITHUB_REF = "master" ] && INPUT_ALLOW_PROD=true || INPUT_ALLOW_PROD=false
+if [[ -z "$INPUT_ALLOW_PROD" ]]; then
+  [ "$GITHUB_REF" = "master" ] && INPUT_ALLOW_PROD=true || INPUT_ALLOW_PROD=false
 fi
 
 # Convenience variables
