@@ -52,7 +52,5 @@ SLACK_PAYLOAD_BASE=$(jq -n -c \
 
 SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD_BASE | jq -c '.blocks[1].elements = '"$(toArray ${BUTTONS[@]})")
 
-printenv
-
 # Post message to slack webook endpoint
 curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL

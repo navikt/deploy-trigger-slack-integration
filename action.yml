@@ -1,20 +1,20 @@
 name: 'Deploy Trigger Slack Integration'
 description: 'Post deploy trigger links to provided slack channel'
 inputs:
-  webhook-url:
+  webhook_url:
     description: 'Slack webhook endpoint'
     required: true
-  slack-channel:
+  slack_channel:
     description: 'Slack channel to which message will be sent. Must include prefix `#`'
     required: true
-  preprod-environments:
+  preprod_environments:
     description: 'Whitespace-separated list of desired dev environments'
     required: true
-  deploy-proxy-url:
+  deploy_proxy_url:
     description: 'Path to deploy trigger proxy app'
     required: false
     default: 'http://localhost:8097/dittnav-deploy'
-  allow-prod:
+  allow_prod:
     description: 'Enable/diable prod deploy button. Will show on master branch by default.'
     required: false
 runs:
