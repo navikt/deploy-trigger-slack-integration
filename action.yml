@@ -17,6 +17,9 @@ inputs:
   allow_prod:
     description: 'Enable/diable prod deploy button. Will show on master branch by default.'
     required: false
+  commit_sha:
+    description: 'Override for commit specified by GITHUB_SHA.'
+    required: false
 runs:
   using: docker
   image: Dockerfile

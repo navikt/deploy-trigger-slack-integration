@@ -3,14 +3,14 @@
 createDevButton() {
   echo $( jq -n -c \
           --arg txt $(printf '%s\n' "$1" | awk '{print toupper($0) }') \
-          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/dev/$REPOSITORY_PARAM/$GITHUB_SHA/$1" \
+          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/dev/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/$1" \
           '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url }' \
   )
 }
 
 createProdButton() {
   echo $( jq -n -c \
-          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/prod/$REPOSITORY_PARAM/$GITHUB_SHA" \
+          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/prod/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA" \
           '{ type: "button", text: { type: "plain_text", text: "Prod" }, url: $url, style: "danger" }' \
   )
 }
@@ -25,9 +25,13 @@ if [[ -z "$INPUT_ALLOW_PROD" ]]; then
   [ "$GITHUB_REF" = "refs/heads/master" ] && INPUT_ALLOW_PROD=true || INPUT_ALLOW_PROD=false
 fi
 
+if [[ -z "$INPUT_COMMIT_SHA" ]]; then
+  INPUT_COMMIT_SHA=$GITHUB_SHA
+fi
+
 # Convenience variables
 REPOSITORY_PARAM=$(echo $GITHUB_REPOSITORY | sed 's/\//%2F/g')
-SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+SHORT_SHA=$(echo $INPUT_COMMIT_SHA | cut -c1-7)
 SHORT_REPO=$(echo $GITHUB_REPOSITORY | rev | cut -f1 -d"/" | rev )
 
 
