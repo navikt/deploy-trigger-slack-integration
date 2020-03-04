@@ -9,13 +9,13 @@ inputs:
     required: true
   preprod_environments:
     description: 'Whitespace-separated list of desired dev environments'
-    required: true
+    required: false
   deploy_proxy_url:
     description: 'Path to deploy trigger proxy app'
     required: false
     default: 'http://localhost:8097/dittnav-deploy'
   allow_prod:
-    description: 'Enable/diable prod deploy button. Will show on master branch by default.'
+    description: 'Enable/disable prod deploy button. Will show on master branch by default.'
     required: false
   commit_sha:
     description: 'Override for commit specified by GITHUB_SHA.'

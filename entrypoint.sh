@@ -46,10 +46,18 @@ else
 fi
 
 
+# Naively infer preprod environments unless explicitly specified. Only likely to work for dittnav apps due to assumptions about file structure.
+if [[ ! -z $INPUT_PREPROD_ENVIRONMENTS ]]; then
+  PREPROD_ENVIRONMENTS=$INPUT_PREPROD_ENVIRONMENTS
+else
+  PREPROD_ENVIRONMENTS=$(find ./nais/dev-sbs -type f -name "*.json" | sed 's/.\/nais\/dev-sbs\///g' | sed 's/.json//g' | sort)
+fi
+
+
 # Add link buttons for slack message
 BUTTONS=()
 
-for dev_env in ${INPUT_PREPROD_ENVIRONMENTS}; do
+for dev_env in ${PREPROD_ENVIRONMENTS}; do
   BUTTONS+=($(createDevButton $dev_env))
 done
 
