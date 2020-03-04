@@ -36,7 +36,10 @@ SHORT_SHA=$(echo $INPUT_COMMIT_SHA | cut -c1-7)
 SHORT_REPO=$(echo $GITHUB_REPOSITORY | rev | cut -f1 -d"/" | rev )
 
 # Find branch name in pretty format (remove 'refs/heads' on normal branches. Use provided GITHUB_HEAD_REF on temporary branches)
-if [[ -z "$GITHUB_HEAD_REF" ]]; then
+# Overridden by INPUT_COMMIT_BRANCH if set
+if [[ ! -z "$INPUT_COMMIT_BRANCH" ]]; then
+  SHORT_REF=$INPUT_COMMIT_BRANCH
+elif [[ -z "$GITHUB_HEAD_REF" ]]; then
   SHORT_REF=${GITHUB_REF//refs\/heads\//}
 else
   SHORT_REF=$GITHUB_HEAD_REF

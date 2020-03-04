@@ -20,6 +20,9 @@ inputs:
   commit_sha:
     description: 'Override for commit specified by GITHUB_SHA.'
     required: false
+  commit_branch:
+    description: 'Override for branch name.'
+    required: false
 runs:
   using: docker
   image: Dockerfile
