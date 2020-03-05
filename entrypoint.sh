@@ -22,7 +22,7 @@ toArray() {
 
 # Show prod-deploy button only for master branch by default. Can be overridden by setting INPUT_ALLOW_PROD
 if [[ -z "$INPUT_ALLOW_PROD" ]]; then
-  [ "$GITHUB_REF" = "refs/heads/master" ] && INPUT_ALLOW_PROD=true || INPUT_ALLOW_PROD=false
+  [ "$GITHUB_REF" = "refs/heads/master" ] && INPUT_ALLOW_PROD='true' || INPUT_ALLOW_PROD='false'
 fi
 
 # Use provided commit sha if specified
@@ -61,10 +61,12 @@ for dev_env in ${PREPROD_ENVIRONMENTS}; do
   BUTTONS+=($(createDevButton $dev_env))
 done
 
-if $INPUT_ALLOW_PROD; then
-  BUTTONS+=($(createProdButton))
+# Add prod-button if allowed and config folder for prod-sbs exists
+if [[ $INPUT_ALLOW_PROD == 'true' ]]; then
+  if [[ -d nais/prod-sbs ]]; then
+    BUTTONS+=($(createProdButton))
+  fi
 fi
-
 
 # Create slack message payload
 SLACK_PAYLOAD_BASE=$(jq -n -c \
