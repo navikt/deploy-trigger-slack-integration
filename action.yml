@@ -23,6 +23,9 @@ inputs:
   commit_branch:
     description: 'Override for branch name.'
     required: false
+  commit_message:
+    description: 'Latest commit message or general context'
+    required: false
 runs:
   using: docker
   image: Dockerfile

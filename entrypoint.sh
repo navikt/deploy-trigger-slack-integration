@@ -68,6 +68,20 @@ if [[ $INPUT_ALLOW_PROD == 'true' ]]; then
   fi
 fi
 
+# Set link to branch
+if [[ $SHORT_REF == 'master' ]]; then
+  $BRANCH_LINK="https://github.com/$GITHUB_REPOSITORY"
+else
+  $BRANCH_LINK="https://github.com/$GITHUB_REPOSITORY/tree/$SHORT_REF"
+fi
+
+# Set context message based on commit sha, branch name and commit message
+if [[ -z $INPUT_COMMIT_MESSAGE ]]; then
+  CONTEXT_MESSAGE="Deploy commit on branch \`<$BRANCH_LINK|$SHORT_REF>\` \n \`$SHORT_SHA\`"
+else
+  CONTEXT_MESSAGE="Deploy commit on branch \`<$BRANCH_LINK|$SHORT_REF>\` \n \`$SHORT_SHA\` - $INPUT_COMMIT_MESSAGE"
+fi
+
 # Create slack message payload
 SLACK_PAYLOAD_BASE=$(jq -n -c \
                     --arg chn "$INPUT_SLACK_CHANNEL" \
