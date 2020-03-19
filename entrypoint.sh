@@ -100,4 +100,4 @@ SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD | sed 's/\\n/\n/g')
 
 
 # Post message to slack webook endpoint
-echo curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
+curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
