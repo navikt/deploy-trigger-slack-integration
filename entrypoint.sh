@@ -86,7 +86,7 @@ fi
 SLACK_PAYLOAD_BASE=$(jq -n -c \
                     --arg chn "$INPUT_SLACK_CHANNEL" \
                     --arg usr "GH Actions Deploy - $SHORT_REPO" \
-                    --arg msg "Deploy \`$SHORT_REF  $SHORT_SHA\`" \
+                    --arg msg "$CONTEXT_MESSAGE" \
                     '{ channel: $chn, username: $usr, text: "Deploy-knapp", icon_emoji: ":git:", blocks: [ { type: "section", text: { type: "mrkdwn", text: $msg } },  { type: "actions", elements: [] } ] }' )
 
 SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD_BASE | jq -c '.blocks[1].elements = '"$(toArray ${BUTTONS[@]})")
