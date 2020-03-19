@@ -77,9 +77,9 @@ fi
 
 # Set context message based on commit sha, branch name and commit message
 if [[ -z $INPUT_COMMIT_MESSAGE ]]; then
-  CONTEXT_MESSAGE="Deploy commit on branch \`<$BRANCH_LINK|$SHORT_REF>\` %5c \`$SHORT_SHA\`"
+  CONTEXT_MESSAGE="Deploy commit on branch \`<$BRANCH_LINK|$SHORT_REF>\` \n \`$SHORT_SHA\`"
 else
-  CONTEXT_MESSAGE="Deploy commit on branch \`<$BRANCH_LINK|$SHORT_REF>\` %5c \`$SHORT_SHA\` - $INPUT_COMMIT_MESSAGE"
+  CONTEXT_MESSAGE="Deploy commit on branch \`<$BRANCH_LINK|$SHORT_REF>\` \n \`$SHORT_SHA\` - $INPUT_COMMIT_MESSAGE"
 fi
 
 # Create slack message payload
