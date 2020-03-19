@@ -96,8 +96,8 @@ SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD_BASE | jq -c '.blocks[1].elements = '"$(toAr
 # which is rendered as '\n' rather than an actual newline. Does not appear to be an issue in zsh, however. Attempting to force a newline character through
 # printf '\x0a' for instance seems to be equivalent to starting a new line in the script (IE by pressing the return key), which breaks the script. Only
 # workaround I have found in bash is simply to replace the '\\n' with '\n'
-SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD | sed 's/\\n/\n/g')
+SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD | sed 's/\\n/%5c/g')
 
 
 # Post message to slack webook endpoint
-curl -X POST --data "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
+curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
