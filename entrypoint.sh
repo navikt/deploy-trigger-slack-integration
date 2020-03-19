@@ -70,9 +70,9 @@ fi
 
 # Set link to branch
 if [[ $SHORT_REF == 'master' ]]; then
-  $BRANCH_LINK="https://github.com/$GITHUB_REPOSITORY"
+  BRANCH_LINK="https://github.com/$GITHUB_REPOSITORY"
 else
-  $BRANCH_LINK="https://github.com/$GITHUB_REPOSITORY/tree/$SHORT_REF"
+  BRANCH_LINK="https://github.com/$GITHUB_REPOSITORY/tree/$SHORT_REF"
 fi
 
 # Set context message based on commit sha, branch name and commit message
@@ -93,4 +93,4 @@ SLACK_PAYLOAD=$(echo $SLACK_PAYLOAD_BASE | jq -c '.blocks[1].elements = '"$(toAr
 
 
 # Post message to slack webook endpoint
-curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
+echo curl -X POST --data-urlencode "payload=$SLACK_PAYLOAD" $INPUT_WEBHOOK_URL
