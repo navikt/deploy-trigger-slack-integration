@@ -78,7 +78,7 @@ for dev_env in ${PREPROD_ENVIRONMENTS}; do
   BUTTONS+=($(createDevButton $dev_env))
 done
 
-# Add prod-button if allowed and config folder for prod-sbs exists
+# Add prod-button if allowed and config folder for prod exists
 if [[ $INPUT_ALLOW_PROD == 'true' ]]; then
   PROD_ENVIRONMENTS=$(find ./nais/prod-* -type f -name "*.json" | sed 's/.\/nais\///g' | sed 's/.json//g' | tr '/' ':' | sort)
   for prod_env in ${PROD_ENVIRONMENTS}; do
