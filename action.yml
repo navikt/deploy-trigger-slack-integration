@@ -8,8 +8,12 @@ inputs:
     description: 'Slack channel to which message will be sent. Must include prefix `#`'
     required: true
   preprod_environments:
-    description: 'Whitespace-separated list of desired dev environments'
+    description: 'Whitespace-separated list of desired dev environments with format cluster:namespace. EG dev-sbs:personbruker'
     required: false
+  default_namespace:
+    description: 'Assumed namespace when nothing else is specified, to remove redundancy. Only affects presentation'
+    required: false
+    default: 'personbruker'
   deploy_proxy_url:
     description: 'Path to deploy trigger proxy app'
     required: false
