@@ -11,7 +11,7 @@ createDevButton() {
 
   echo $( jq -n -c \
           --arg txt $(printf '%s\n' "$CLUSTER$DISPLAY_NAMESPACE" | awk '{print toupper($0) }') \
-          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/dev/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/$CLUSTER/$NAMESPACE" \
+          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/ref/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/env/$CLUSTER/$NAMESPACE" \
           '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url }' \
   )
 }
@@ -27,7 +27,7 @@ createProdButton() {
 
   echo $( jq -n -c \
           --arg txt $(printf '%s\n' "$CLUSTER$DISPLAY_NAMESPACE" | awk '{print toupper($0) }') \
-          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/prod/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/$CLUSTER/$NAMESPACE" \
+          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/ref/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/env/$CLUSTER/$NAMESPACE" \
           '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url, style: "danger" }' \
   )
 }

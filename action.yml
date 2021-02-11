@@ -13,7 +13,6 @@ inputs:
   default_namespace:
     description: 'Assumed namespace when nothing else is specified, to remove redundancy. Only affects presentation'
     required: false
-    default: 'personbruker'
   deploy_proxy_url:
     description: 'Path to deploy trigger proxy app'
     required: false
