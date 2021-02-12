@@ -1,17 +1,34 @@
 #!/bin/bash
 
 createDevButton() {
+  CLUSTER=$(echo $1 | sed 's/:.*//')
+  NAMESPACE=$(echo $1 | sed 's/.*://')
+  DISPLAY_NAMESPACE=""
+
+  if [[ "$NAMESPACE" != "$INPUT_DEFAULT_NAMESPACE" ]]; then
+    DISPLAY_NAMESPACE=":$NAMESPACE"
+  fi
+
   echo $( jq -n -c \
-          --arg txt $(printf '%s\n' "$1" | awk '{print toupper($0) }') \
-          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/dev/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/$1" \
+          --arg txt $(printf '%s\n' "$CLUSTER$DISPLAY_NAMESPACE" | awk '{print toupper($0) }') \
+          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/ref/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/env/$CLUSTER/$NAMESPACE" \
           '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url }' \
   )
 }
 
 createProdButton() {
+  CLUSTER=$(echo $1 | sed 's/:.*//')
+  NAMESPACE=$(echo $1 | sed 's/.*://')
+  DISPLAY_NAMESPACE=""
+
+  if [[ "$NAMESPACE" != "$INPUT_DEFAULT_NAMESPACE" ]]; then
+    DISPLAY_NAMESPACE=":$NAMESPACE"
+  fi
+
   echo $( jq -n -c \
-          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/prod/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA" \
-          '{ type: "button", text: { type: "plain_text", text: "Prod" }, url: $url, style: "danger" }' \
+          --arg txt $(printf '%s\n' "$CLUSTER$DISPLAY_NAMESPACE" | awk '{print toupper($0) }') \
+          --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/ref/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/env/$CLUSTER/$NAMESPACE" \
+          '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url, style: "danger" }' \
   )
 }
 
@@ -50,7 +67,7 @@ fi
 if [[ ! -z $INPUT_PREPROD_ENVIRONMENTS ]]; then
   PREPROD_ENVIRONMENTS=$INPUT_PREPROD_ENVIRONMENTS
 else
-  PREPROD_ENVIRONMENTS=$(find ./nais/dev-sbs -type f -name "*.json" | sed 's/.\/nais\/dev-sbs\///g' | sed 's/.json//g' | sort)
+  PREPROD_ENVIRONMENTS=$(find ./nais/dev-* -type f -name "*.json" | sed 's/.\/nais\///g' | sed 's/.json//g' | tr '/' ':' | sort)
 fi
 
 
@@ -61,11 +78,12 @@ for dev_env in ${PREPROD_ENVIRONMENTS}; do
   BUTTONS+=($(createDevButton $dev_env))
 done
 
-# Add prod-button if allowed and config folder for prod-sbs exists
+# Add prod-button if allowed and config folder for prod exists
 if [[ $INPUT_ALLOW_PROD == 'true' ]]; then
-  if [[ -d nais/prod-sbs ]]; then
-    BUTTONS+=($(createProdButton))
-  fi
+  PROD_ENVIRONMENTS=$(find ./nais/prod-* -type f -name "*.json" | sed 's/.\/nais\///g' | sed 's/.json//g' | tr '/' ':' | sort)
+  for prod_env in ${PROD_ENVIRONMENTS}; do
+    BUTTONS+=($(createProdButton $prod_env))
+  done
 fi
 
 # Set link to branch
