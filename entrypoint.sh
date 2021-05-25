@@ -55,13 +55,18 @@ fi
 # Add link buttons for slack message
 BUTTONS=()
 
+
+# Find all nais.yaml files for dev clusters in the nais folder
 DEV_CONFIGS=$(find ./nais/dev-* -type f -name "*.yaml")
 
 for nais_config in ${DEV_CONFIGS}; do
+  # Determine cluster based on folder name
   DEV_CLUSTER=$(echo "$nais_config" | sed 's/.\/nais\///g' | sed 's/\/nais.yaml//g')
 
+  # Read and extract namespace from the nais.yaml file
   DEV_ENVIRONMENT=$(grep -A4 'metadata:' "$nais_config" | grep 'namespace:' | sed 's/.*namespace: //' | xargs)
 
+  # Create a button object for each given cluster-namespace combination
   BUTTONS+=($(createDevButton $DEV_CLUSTER $DEV_ENVIRONMENT))
 done
 
