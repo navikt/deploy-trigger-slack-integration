@@ -1,32 +1,22 @@
 #!/bin/bash
 
 createDevButton() {
-  CLUSTER=$(echo $1 | sed 's/:.*//')
-  NAMESPACE=$(echo $1 | sed 's/.*://')
-  DISPLAY_NAMESPACE=""
-
-  if [[ "$NAMESPACE" != "$INPUT_DEFAULT_NAMESPACE" ]]; then
-    DISPLAY_NAMESPACE=":$NAMESPACE"
-  fi
+  CLUSTER="$1"
+  NAMESPACE="$2"
 
   echo $( jq -n -c \
-          --arg txt $(printf '%s\n' "$CLUSTER$DISPLAY_NAMESPACE" | awk '{print toupper($0) }') \
+          --arg txt $(printf '%s\n' "$CLUSTER:$NAMESPACE" | awk '{print toupper($0) }') \
           --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/ref/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/env/$CLUSTER/$NAMESPACE" \
           '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url }' \
   )
 }
 
 createProdButton() {
-  CLUSTER=$(echo $1 | sed 's/:.*//')
-  NAMESPACE=$(echo $1 | sed 's/.*://')
-  DISPLAY_NAMESPACE=""
-
-  if [[ "$NAMESPACE" != "$INPUT_DEFAULT_NAMESPACE" ]]; then
-    DISPLAY_NAMESPACE=":$NAMESPACE"
-  fi
+  CLUSTER="$1"
+  NAMESPACE="$2"
 
   echo $( jq -n -c \
-          --arg txt $(printf '%s\n' "$CLUSTER$DISPLAY_NAMESPACE" | awk '{print toupper($0) }') \
+          --arg txt $(printf '%s\n' "$CLUSTER:$NAMESPACE" | awk '{print toupper($0) }') \
           --arg url "$INPUT_DEPLOY_PROXY_URL/deploy/ref/$REPOSITORY_PARAM/$INPUT_COMMIT_SHA/env/$CLUSTER/$NAMESPACE" \
           '{ type: "button", text: { type: "plain_text", text: $txt }, url: $url, style: "danger" }' \
   )
@@ -62,27 +52,35 @@ else
   SHORT_REF=$GITHUB_HEAD_REF
 fi
 
-
-# Naively infer preprod environments unless explicitly specified. Only likely to work for dittnav apps due to assumptions about file structure.
-if [[ ! -z $INPUT_PREPROD_ENVIRONMENTS ]]; then
-  PREPROD_ENVIRONMENTS=$INPUT_PREPROD_ENVIRONMENTS
-else
-  PREPROD_ENVIRONMENTS=$(find ./nais/dev-* -type f -name "*.json" | sed 's/.\/nais\///g' | sed 's/.json//g' | tr '/' ':' | sort)
-fi
-
-
 # Add link buttons for slack message
 BUTTONS=()
 
-for dev_env in ${PREPROD_ENVIRONMENTS}; do
-  BUTTONS+=($(createDevButton $dev_env))
+
+# Find all nais.yaml files for dev clusters in the nais folder
+DEV_CONFIGS=$(find ./nais/dev-* -type f -name "*.yaml")
+
+for nais_config in ${DEV_CONFIGS}; do
+  # Determine cluster based on folder name
+  DEV_CLUSTER=$(echo "$nais_config" | sed 's/.\/nais\///g' | sed 's/\/nais.yaml//g')
+
+  # Read and extract namespace from the nais.yaml file
+  DEV_ENVIRONMENT=$(grep -A4 'metadata:' "$nais_config" | grep 'namespace:' | sed 's/.*namespace: //' | xargs)
+
+  # Create a button object for each given cluster-namespace combination
+  BUTTONS+=($(createDevButton $DEV_CLUSTER $DEV_ENVIRONMENT))
 done
+
 
 # Add prod-button if allowed and config folder for prod exists
 if [[ $INPUT_ALLOW_PROD == 'true' ]]; then
-  PROD_ENVIRONMENTS=$(find ./nais/prod-* -type f -name "*.json" | sed 's/.\/nais\///g' | sed 's/.json//g' | tr '/' ':' | sort)
-  for prod_env in ${PROD_ENVIRONMENTS}; do
-    BUTTONS+=($(createProdButton $prod_env))
+  PROD_CONFIGS=$(find ./nais/prod-* -type f -name "*.yaml")
+
+  for nais_config in ${PROD_CONFIGS}; do
+    PROD_CLUSTER=$(echo "$nais_config" | sed 's/.\/nais\///g' | sed 's/\/nais.yaml//g')
+
+    PROD_ENVIRONMENT=$(grep -A4 'metadata:' "$nais_config" | grep 'namespace:' | sed 's/.*namespace: //' | xargs)
+
+    BUTTONS+=($(createProdButton $PROD_CLUSTER $PROD_ENVIRONMENT))
   done
 fi
 
